@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <!-- Copyright: DemoMaker (c) 2026 -->
 <!--
-  노드 그래프 로딩 단계 문구 데모 — 브라우저에서 직접 눌러 보는 용도. 서버가 필요하지 않습니다.
+  그래프 로딩 UX 개선 데모 — 브라우저에서 직접 눌러 보는 용도. 서버가 필요하지 않습니다.
 
   왼쪽이 바뀌기 전(문구 하나로 끝까지), 오른쪽이 바뀐 뒤(끝난 단계가 한 줄씩 쌓임)입니다.
   두 쪽의 총 시간은 같습니다 — 바뀌는 것은 그동안 화면이 무엇을 말해 주는가입니다.
@@ -22,7 +22,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>그래프를 여는 4초 동안 화면은 아무 말도 하지 않는다</title>
+<title>그래프 로딩 UX 개선</title>
 <style>
 /* ── 공통 토큰과 뼈대 ─────────────────────────────────────────────── */
 :root {
@@ -40,13 +40,21 @@ body { margin:0 auto; padding:28px 24px 48px; max-width:1180px;
        background:var(--bg); color:var(--ink); line-height:1.6;
        font-family:"Malgun Gothic","Segoe UI",system-ui,sans-serif;
        overflow-wrap:anywhere; word-break:keep-all; }
-h1 { font-size:21px; margin:0 0 6px; line-height:1.4; }
-h2 { font-size:16px; margin:28px 0 8px; }
+h1 { font-size:22px; margin:0 0 6px; line-height:1.4; }
+/* 본문보다 확실히 커야 절의 경계가 보입니다. 같은 크기면 문단으로 읽힙니다. */
+h2 { font-size:18px; font-weight:700; margin:32px 0 12px; }
+/* 데모 구현부를 위아래로 갈라 놓는 선입니다. */
+hr { border:none; border-top:1px solid var(--line); margin:24px 0; }
 .lede { color:var(--muted); margin:0; max-width:84ch; }
-.why { max-width:84ch; }
+
+/* 「■ 왜 필요한가?」 자리입니다. 이 절이 없는 데모는 내보내지 않습니다.
+   h2 아래 내용은 한 칸 들여써서 어느 절에 딸린 글인지 눈에 보이게 합니다. */
+.why { max-width:84ch; padding-left:20px; }
 .why p { margin:0 0 8px; }
 .why strong { color:var(--ink); }
-.checklist { list-style:none; padding:0; margin:0; max-width:84ch; }
+
+/* 「■ 체크리스트」 자리입니다. 마무리 문단을 대신합니다. */
+.checklist { list-style:none; padding:0 0 0 20px; margin:0; max-width:84ch; }
 .checklist li + li { margin-top:14px; }
 .checklist label { display:flex; gap:9px; align-items:flex-start; cursor:pointer; }
 .checklist input { margin:6px 0 0; accent-color:var(--accent); flex:none; }
@@ -138,7 +146,7 @@ button:focus-visible, select:focus-visible, input:focus-visible {
 </head>
 <body>
 
-<h1>그래프를 여는 4초 동안 화면은 아무 말도 하지 않는다</h1>
+<h1>그래프 로딩 UX 개선</h1>
 <p class="lede">
 노드 그래프 편집기를 열 때 화면이 무엇을 말해 주어야 하는지 좌우로 견주어 봅니다. 조건은 아래에서
 직접 바꿀 수 있습니다.
@@ -157,6 +165,8 @@ button:focus-visible, select:focus-visible, input:focus-visible {
 날에는 어느 단계가 오래 걸렸는지 그대로 드러납니다. 다만 <strong>여는 시간 자체는 줄지 않습니다.</strong>
 편집기에 알림을 몇 줄 더하고 문구를 갈아 끼우는 것이 전부입니다.</p>
 </div>
+
+<hr>
 
 <div class="controls">
   <label>서버 응답 1회
@@ -201,6 +211,8 @@ button:focus-visible, select:focus-visible, input:focus-visible {
     <div class="log" id="log-after"></div>
   </section>
 </div>
+
+<hr>
 
 <h2>■ 체크리스트</h2>
 <ul class="checklist">

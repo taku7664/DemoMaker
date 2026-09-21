@@ -5,6 +5,6 @@
 
 | 파일 | 바탕이 된 템플릿 | 왜 필요한가? |
 | --- | --- | --- |
-| `그래프를 여는 4초 동안 화면은 아무 말도 하지 않는다.html` | `shared/templates/demo-compare.html` | 여는 동안 멈춘 것인지 기다리는 것인지 가를 수 없어, 창을 닫고 다시 여는 사람이 생긴다 |
+| `그래프 로딩 UX 개선.html` | `shared/templates/demo-compare.html` | 여는 동안 멈춘 것인지 기다리는 것인지 가를 수 없어, 창을 닫고 다시 여는 사람이 생긴다 |
 
 규격은 `shared/reference/STYLE.md` 에 있습니다.

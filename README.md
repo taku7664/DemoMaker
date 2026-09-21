@@ -2,7 +2,7 @@
 
 데모를 html로 간단하게 나타내도록 해주는 Skill
 
-기술 변경 사항을 글로 설명하는 대신 브라우저에서 직접 눌러 보게 만듭니다. 만들어진 데모는 파일 하나로
+기술 변경 사항을 글로 설명하는 대신 브라우저에서 직접 눌러 보게 만듭니다. 이 스킬이 만든 데모는 파일 하나로
 완결되므로 서버나 빌드 과정 없이 그대로 열어서 보고, 그대로 첨부해서 보낼 수 있습니다.
 **Claude Code** 와 **Codex** 양쪽에서 같은 스킬로 쓸 수 있습니다.
 
@@ -16,7 +16,7 @@ powershell -ExecutionPolicy Bypass -File install\install.ps1
 sh install/install.sh
 ```
 
-기본값은 두 도구 모두에 설치하는 것입니다. 한쪽만 설치하거나 특정 저장소 안에만 두려면 다음과 같이 합니다.
+아무 것도 붙이지 않으면 두 도구 모두에 설치합니다. 한쪽만 설치하거나 특정 저장소 안에만 두려면 다음과 같이 합니다.
 
 | 하려는 일 | PowerShell | sh |
 | --- | --- | --- |
@@ -25,7 +25,7 @@ sh install/install.sh
 | 현재 저장소 안에만 설치 | `install\install.ps1 -Scope repo` | `install/install.sh --scope repo` |
 | 설치본 지우기 | `install\install.ps1 -Uninstall` | `install/install.sh --uninstall` |
 
-설치되는 위치는 다음과 같습니다. 이미 실행 중인 세션이라면 한 번 다시 시작해야 목록에 나타납니다.
+스크립트는 아래 위치에 설치합니다. 이미 실행 중인 세션이라면 한 번 다시 시작해야 목록에 나타납니다.
 
 | 도구 | 개인 설치 | 저장소 설치 |
 | --- | --- | --- |
@@ -34,10 +34,10 @@ sh install/install.sh
 
 ## 부르는 법
 
-| 도구 | 명시적으로 부르기 | 저절로 불려 나오기 |
+| 도구 | 명시적으로 부르기 | 저절로 불려 나올 때 |
 | --- | --- | --- |
-| Claude Code | `/demo-maker` | 데모를 만들어 달라는 요청에서 자동으로 |
-| Codex | `$demo-maker` (또는 `/skills` 목록에서 선택) | 같음 |
+| Claude Code | `/demo-maker` | 데모를 만들어 달라고 하면 저절로 나옵니다 |
+| Codex | `$demo-maker` (또는 `/skills` 목록에서 선택) | Claude Code 와 같습니다 |
 
 ## 구성
 

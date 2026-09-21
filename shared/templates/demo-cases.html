@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<!-- Copyright: DemoMaker (c) 2026 -->
+<!--
+  ■ 템플릿: 케이스 표형 데모 (규칙이 경우마다 어떻게 갈리는지 보여 줄 때)
+
+  입력과 기대값을 미리 적어 둔 케이스를 차례로 돌려 보고, 통과와 실패를 표 하나에 모읍니다.
+  「이 규칙은 이런 경우에 이렇게 동작한다」 를 눈으로 확인시켜야 할 때 이 템플릿을 씁니다.
+  경계값과 빈 입력, 오류 입력을 같은 표에 함께 두는 것이 이 형식의 핵심입니다.
+
+  파일을 그냥 열면 됩니다(서버가 필요하지 않습니다). 열리면 한 번 자동으로 돌아갑니다.
+
+  ⚠ 이 화면은 규칙을 눈으로 보여 주는 용도입니다. 회귀를 막는 일은 저장소의 단위 테스트가 맡습니다.
+    여기의 판정은 아래 CASES 에 적힌 기대값과 견주어 낸 것이지, 제품을 직접 부른 결과가 아닙니다.
+
+  ▣ 새 데모를 만들 때 고쳐야 하는 자리에는 모두 [고칠 자리] 표시를 붙여 두었습니다.
+    대개 SUBJECT 함수와 CASES 배열, 제목·설명만 바꾸면 한 편이 완성됩니다.
+-->
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- [고칠 자리] 문서 제목 -->
+<title>케이스 표형 데모 템플릿</title>
+<style>
+/* ── 공통 토큰과 뼈대 (reference/base.css 와 같은 내용이므로 그대로 둡니다) ── */
+:root {
+  color-scheme: light dark;
+  --ink:#1b1b1f; --muted:#5b5f6a; --bg:#ffffff; --line:#d7dae0; --panel:#f6f7f9;
+  --accent:#2f6feb; --warm:#d94a3d; --ok:#1a7f45; --skel:#e3e6ea; --row:#eef1f5;
+  --radius:8px;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --ink:#e8eaee; --muted:#a3a9b5; --bg:#16181d; --line:#343841; --panel:#1e2128;
+          --accent:#6d9bff; --warm:#ef7d70; --ok:#4cbf82; --skel:#2a2e36; --row:#252932; }
+}
+* { box-sizing:border-box; }
+body { margin:0 auto; padding:28px 24px 48px; max-width:1180px;
+       background:var(--bg); color:var(--ink); line-height:1.6;
+       font-family:"Malgun Gothic","Segoe UI",system-ui,sans-serif;
+       overflow-wrap:anywhere; word-break:keep-all; }
+h1 { font-size:21px; margin:0 0 6px; }
+.lede { color:var(--muted); margin:0 0 20px; max-width:84ch; }
+.hint { margin-top:24px; color:var(--muted); font-size:13px; max-width:84ch; }
+.hint strong { color:var(--ink); }
+.controls { display:flex; gap:20px; align-items:center; flex-wrap:wrap;
+            background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+            padding:14px 18px; }
+.controls label { font-size:13px; color:var(--muted); display:flex; align-items:center; gap:8px; }
+select, button { font:inherit; font-size:14px; border-radius:6px; border:1px solid var(--line);
+                 background:var(--bg); color:var(--ink); padding:7px 14px; cursor:pointer; }
+button.primary { background:var(--accent); border-color:var(--accent); color:#fff; font-weight:600; }
+button:disabled, select:disabled { opacity:.45; cursor:default; }
+button:focus-visible, select:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+.empty { display:grid; place-items:center; text-align:center; color:var(--muted);
+         font-size:13px; padding:28px 16px; }
+.log { margin-top:16px; height:120px; overflow:auto; background:var(--panel);
+       border:1px solid var(--line); border-radius:6px; padding:8px 10px; font-size:12px;
+       font-family:Consolas,"D2Coding",monospace; white-space:pre-wrap; }
+.log div { color:var(--muted); }
+.log .hit { color:var(--ok); }
+.log .bad { color:var(--warm); }
+.badge { display:inline-block; min-width:52px; text-align:center; font-size:11px; font-weight:600;
+         border-radius:4px; padding:2px 8px; border:1px solid var(--line); color:var(--muted); }
+.badge.pass { color:var(--ok); border-color:var(--ok); }
+.badge.fail { color:var(--warm); border-color:var(--warm); }
+.badge.skip { color:var(--muted); }
+.badge.run  { color:var(--accent); border-color:var(--accent); }
+table { width:100%; border-collapse:collapse; font-size:13px; }
+th, td { text-align:left; padding:7px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
+th { color:var(--muted); font-weight:600; font-size:12px; }
+td.num { font-variant-numeric:tabular-nums; white-space:nowrap; }
+@media print { body { max-width:none; } .controls { display:none; } .log { height:auto; } }
+
+/* ── 이 데모 전용 ─────────────────────────────────────────────────── */
+/* 요약 막대. 케이스가 몇 건이든 높이가 변하지 않도록 자리를 잡아 둡니다. */
+.tally { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin:20px 0 10px;
+         min-height:2.2em; }
+.tally .big { font-size:18px; font-weight:600; font-variant-numeric:tabular-nums; }
+.tally .ok { color:var(--ok); } .tally .no { color:var(--warm); }
+/* 표를 감싸는 상자. 케이스가 아주 많아도 문서가 끝없이 길어지지 않습니다. */
+.tablewrap { border:1px solid var(--line); border-radius:var(--radius); overflow:auto;
+             max-height:520px; background:var(--bg); }
+.tablewrap thead th { position:sticky; top:0; background:var(--panel); z-index:1; }
+tbody tr.fail { background:color-mix(in srgb, var(--warm) 8%, transparent); }
+tbody tr.skip { opacity:.6; }
+code { font-family:Consolas,"D2Coding",monospace; font-size:12px; }
+.why { display:block; margin-top:4px; color:var(--warm); font-size:12px; }
+.group { color:var(--muted); font-size:12px; }
+</style>
+</head>
+<body>
+
+<!-- [고칠 자리] 제목과 도입부. 「어떤 규칙을 확인하는 표인가」를 한 문단으로 적습니다. -->
+<h1>케이스 표형 데모 템플릿</h1>
+<p class="lede">
+표시 이름을 짓는 규칙을 경우마다 확인합니다. 이름이 비어 있을 때, 공백만 있을 때, 아주 길 때, 같은 이름이
+겹칠 때처럼 <strong>경계에 있는 입력</strong> 을 함께 넣어 두었습니다. 아래 표의 각 줄은 입력 하나와
+기대값 하나를 담고 있고, <strong>전부 실행</strong> 을 누르면 실제 결과와 견주어 통과 여부를 매깁니다.
+</p>
+
+<div class="controls">
+  <button id="run" class="primary" type="button">전부 실행</button>
+  <label>보기
+    <select id="filter">
+      <option value="all">전체</option>
+      <option value="fail">실패만</option>
+      <option value="pass">통과만</option>
+    </select>
+  </label>
+  <button id="reset" type="button">초기화</button>
+</div>
+
+<div class="tally" id="tally"></div>
+
+<div class="tablewrap">
+  <table>
+    <thead>
+      <tr>
+        <th style="width:64px">판정</th>
+        <th style="width:26%">케이스</th>
+        <th style="width:22%">입력</th>
+        <th style="width:22%">기대</th>
+        <th>실제</th>
+      </tr>
+    </thead>
+    <tbody id="rows"></tbody>
+  </table>
+</div>
+
+<div class="log" id="log"></div>
+
+<!-- [고칠 자리] 마무리 설명. 이 표가 무엇을 보증하고 무엇을 보증하지 않는지 분명히 적습니다. -->
+<p class="hint">
+<strong>경계값을 같은 표에 둡니다.</strong> 잘 되는 경우만 모아 둔 표는 규칙을 설명하지 못합니다.
+빈 입력과 아주 긴 입력, 겹치는 입력이 나란히 있어야 규칙의 모양이 드러납니다.<br>
+<strong>실패한 줄은 이유까지 적습니다.</strong> 판정만 붉게 칠하고 끝내면 보는 사람이 다시 물어야 합니다.<br>
+이 표는 규칙을 <strong>눈으로 보여 주는 용도</strong>이고, 회귀를 막는 일은 저장소의 단위 테스트가 맡습니다.
+</p>
+
+<script>
+(function () {
+    'use strict';
+
+    /* ── [고칠 자리] 확인할 규칙 ────────────────────────────────────
+       데모가 보여 주려는 규칙을 이 함수 하나에 담습니다. 제품 코드를 그대로 옮겨 오면 가장 좋고,
+       옮길 수 없다면 규칙만 같게 줄여 씁니다. 줄여 썼다면 그 사실을 위 주석에 밝힙니다. */
+    function SUBJECT(input) {
+        var name = String(input.name === undefined || input.name === null ? '' : input.name).trim();
+        if (name === '') { return '이름 없음'; }
+        if (name.length > 12) { return name.slice(0, 12) + '…'; }
+        if (input.duplicate) { return name + ' (2)'; }
+        return name;
+    }
+
+    /* ── [고칠 자리] 케이스 목록 ────────────────────────────────────
+       name     : 무엇을 확인하는 줄인지 한 구로 적습니다.
+       group    : 표에서 묶어 보여 줄 이름입니다. 필요 없으면 지웁니다.
+       input    : SUBJECT 에 그대로 넘어갑니다.
+       expected : 기대값입니다. 함수로 적으면 실제값을 받아 참·거짓으로 판정합니다.
+       skip     : 아직 확인할 수 없는 케이스에 사유와 함께 붙입니다. 지우지 말고 남겨 둡니다.
+
+       ⚠ 케이스를 0건으로 두어도 표는 빈 화면 대신 그 사정을 말합니다. */
+    var CASES = [
+        { group:'보통',   name:'평범한 이름은 그대로 둔다',
+          input:{ name:'설계 검토' },                  expected:'설계 검토' },
+        { group:'경계',   name:'빈 문자열은 대체 문구로 바꾼다',
+          input:{ name:'' },                          expected:'이름 없음' },
+        { group:'경계',   name:'공백만 있는 이름도 비어 있는 것으로 본다',
+          input:{ name:'   ' },                       expected:'이름 없음' },
+        { group:'경계',   name:'값이 아예 없어도 무너지지 않는다',
+          input:{},                                   expected:'이름 없음' },
+        { group:'경계',   name:'12자를 넘으면 줄이고 말줄임표를 붙인다',
+          input:{ name:'아주 길고 긴 프로세스 이름입니다' }, expected:'아주 길고 긴 프로세스…' },
+        { group:'경계',   name:'딱 12자는 줄이지 않는다',
+          input:{ name:'열두글자짜리이름입니다요' },      expected:'열두글자짜리이름입니다요' },
+        { group:'중복',   name:'같은 이름이 겹치면 번호를 붙인다',
+          input:{ name:'검토', duplicate:true },        expected:'검토 (2)' },
+        { group:'중복',   name:'줄인 이름에는 번호를 붙이지 않는다',
+          input:{ name:'아주 길고 긴 이름이 겹쳤습니다', duplicate:true },
+          expected:function check(actual) { return actual.indexOf('(2)') === -1; },
+          expectedText:'번호가 붙지 않음' },
+        /* 실패한 줄이 어떻게 보이는지 확인할 수 있도록 기대값을 일부러 어긋나게 둔 보기입니다.
+           실제 데모를 만들 때에는 이 줄을 지웁니다. */
+        { group:'보기',   name:'실패한 줄은 이렇게 보입니다 (일부러 어긋나게 둔 보기)',
+          input:{ name:'검토' },                       expected:'검토 (2)' },
+        { group:'보류',   name:'다른 언어 이름의 글자 수 규칙',
+          input:{ name:'Process Review Board' }, expected:'미정',
+          skip:'글자 수를 어떻게 셀지 아직 정해지지 않았습니다' }
+    ];
+
+    var runButton = document.getElementById('run');
+    var resetButton = document.getElementById('reset');
+    var filterSelect = document.getElementById('filter');
+    var rowsBox = document.getElementById('rows');
+    var tallyBox = document.getElementById('tally');
+    var logBox = document.getElementById('log');
+
+    var results = [];
+
+    function note(text, tone) {
+        var line = document.createElement('div');
+        if (tone) { line.className = tone; }
+        logBox.appendChild(line);
+        line.textContent = text;
+        logBox.scrollTop = logBox.scrollHeight;
+    }
+
+    function show(value) {
+        if (value === undefined) { return '<span class="group">(없음)</span>'; }
+        if (typeof value === 'string') {
+            return value === '' ? '<span class="group">(빈 문자열)</span>' : '<code>' + escape(value) + '</code>';
+        }
+        return '<code>' + escape(JSON.stringify(value)) + '</code>';
+    }
+
+    function escape(text) {
+        return String(text).replace(/[&<>]/g, function pick(ch) {
+            return ch === '&' ? '&amp;' : (ch === '<' ? '&lt;' : '&gt;');
+        });
+    }
+
+    /** 케이스 하나를 돌립니다. 규칙이 예외를 던져도 표가 멈추지 않도록 여기서 받아 냅니다. */
+    function runCase(item) {
+        if (item.skip) {
+            return { state:'skip', actual:null, why:item.skip };
+        }
+        var actual;
+        try {
+            actual = SUBJECT(item.input || {});
+        } catch (error) {
+            return { state:'fail', actual:null, why:'규칙이 예외를 던졌습니다 — ' + error.message };
+        }
+        var ok = typeof item.expected === 'function' ? item.expected(actual) : actual === item.expected;
+        return {
+            state: ok ? 'pass' : 'fail',
+            actual: actual,
+            why: ok ? '' : '기대와 다릅니다'
+        };
+    }
+
+    function runAll() {
+        results = CASES.map(runCase);
+        logBox.innerHTML = '';
+        var pass = count('pass'), fail = count('fail'), skip = count('skip');
+        note('케이스 ' + CASES.length + '건을 실행했습니다 — 통과 ' + pass + ' · 실패 ' + fail + ' · 보류 ' + skip,
+             fail ? 'bad' : 'hit');
+        results.forEach(function each(result, index) {
+            if (result.state === 'fail') {
+                note('실패: ' + CASES[index].name + ' — ' + result.why, 'bad');
+            }
+        });
+        render();
+    }
+
+    function count(state) {
+        return results.filter(function pick(result) { return result.state === state; }).length;
+    }
+
+    function reset() {
+        results = [];
+        logBox.innerHTML = '';
+        render();
+    }
+
+    function render() {
+        renderTally();
+        renderRows();
+    }
+
+    function renderTally() {
+        if (CASES.length === 0) { tallyBox.innerHTML = '<span class="group">케이스가 없습니다.</span>'; return; }
+        if (results.length === 0) {
+            tallyBox.innerHTML = '<span class="badge run">대기</span>'
+                + '<span class="group">케이스 ' + CASES.length + '건이 준비되어 있습니다. 「전부 실행」 을 눌러 주십시오.</span>';
+            return;
+        }
+        var fail = count('fail');
+        tallyBox.innerHTML =
+            '<span class="big ' + (fail ? 'no' : 'ok') + '">' + (fail ? '실패 ' + fail + '건' : '전부 통과') + '</span>'
+            + '<span class="group">통과 ' + count('pass') + ' · 실패 ' + fail + ' · 보류 ' + count('skip')
+            + ' · 전체 ' + CASES.length + '</span>';
+    }
+
+    function renderRows() {
+        if (CASES.length === 0) {
+            rowsBox.innerHTML = '<tr><td colspan="5"><div class="empty">확인할 케이스가 아직 없습니다.</div></td></tr>';
+            return;
+        }
+
+        var want = filterSelect.value;
+        var html = [];
+        var lastGroup = '';
+
+        CASES.forEach(function each(item, index) {
+            var result = results[index];
+            var state = result ? result.state : 'run';
+            if (want !== 'all' && result && state !== want) { return; }
+            if (want !== 'all' && !result) { return; }
+
+            if (item.group && item.group !== lastGroup) {
+                lastGroup = item.group;
+                html.push('<tr><td colspan="5" class="group">' + escape(item.group) + '</td></tr>');
+            }
+
+            var label = state === 'pass' ? '통과' : state === 'fail' ? '실패' : state === 'skip' ? '보류' : '대기';
+            var expectedText = item.expectedText ? escape(item.expectedText) : show(item.expected);
+            var actualCell = !result ? '<span class="group">—</span>'
+                : state === 'skip' ? '<span class="group">' + escape(result.why) + '</span>'
+                : show(result.actual) + (result.why ? '<span class="why">' + escape(result.why) + '</span>' : '');
+
+            html.push('<tr class="' + state + '">'
+                + '<td><span class="badge ' + state + '">' + label + '</span></td>'
+                + '<td>' + escape(item.name) + '</td>'
+                + '<td>' + show(item.input && item.input.name) + '</td>'
+                + '<td>' + expectedText + '</td>'
+                + '<td>' + actualCell + '</td>'
+                + '</tr>');
+        });
+
+        if (html.length === 0) {
+            html.push('<tr><td colspan="5"><div class="empty">고른 조건에 해당하는 줄이 없습니다.</div></td></tr>');
+        }
+        rowsBox.innerHTML = html.join('');
+    }
+
+    runButton.addEventListener('click', runAll);
+    resetButton.addEventListener('click', reset);
+    filterSelect.addEventListener('change', renderRows);
+
+    // 열자마자 한 번 돌려 두어야 아무것도 누르지 않은 사람에게도 결과가 보입니다.
+    runAll();
+}());
+</script>
+</body>
+</html>

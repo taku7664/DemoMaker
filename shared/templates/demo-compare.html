@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<!-- Copyright: DemoMaker (c) 2026 -->
+<!--
+  ■ 템플릿: 비교형 데모 (조작이 필요한 경우)
+
+  보는 사람이 직접 조건을 바꿔 가며 「바뀌기 전」과 「바뀐 뒤」를 나란히 비교하는 형식입니다.
+  바뀐 규칙이 조건에 따라 얼마나 다르게 드러나는지 보여 주어야 할 때 이 템플릿을 씁니다.
+
+  파일을 그냥 열면 됩니다(서버가 필요하지 않습니다). 왼쪽이 바뀌기 전, 오른쪽이 바뀐 뒤입니다.
+
+  ⚠ 이 화면은 연출입니다 — 실제로 파일을 읽거나 서버를 부르지 않고 그 지연만 흉내 냅니다.
+    다만 규칙은 제품과 같게 구현했습니다. 회귀를 잡는 일은 단위 테스트가 맡습니다.
+
+  ▣ 새 데모를 만들 때 고쳐야 하는 자리에는 모두 [고칠 자리] 표시를 붙여 두었습니다.
+    표시를 따라가며 제목·설명·조작 항목·시나리오·계측 문구를 바꾸면 한 편이 완성됩니다.
+-->
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- [고칠 자리] 문서 제목 -->
+<title>비교형 데모 템플릿</title>
+<style>
+/* ── 공통 토큰과 뼈대 (reference/base.css 와 같은 내용이므로 그대로 둡니다) ── */
+:root {
+  color-scheme: light dark;
+  --ink:#1b1b1f; --muted:#5b5f6a; --bg:#ffffff; --line:#d7dae0; --panel:#f6f7f9;
+  --accent:#2f6feb; --warm:#d94a3d; --ok:#1a7f45; --skel:#e3e6ea; --row:#eef1f5;
+  --radius:8px;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --ink:#e8eaee; --muted:#a3a9b5; --bg:#16181d; --line:#343841; --panel:#1e2128;
+          --accent:#6d9bff; --warm:#ef7d70; --ok:#4cbf82; --skel:#2a2e36; --row:#252932; }
+}
+* { box-sizing:border-box; }
+body { margin:0 auto; padding:28px 24px 48px; max-width:1180px;
+       background:var(--bg); color:var(--ink); line-height:1.6;
+       font-family:"Malgun Gothic","Segoe UI",system-ui,sans-serif;
+       overflow-wrap:anywhere; word-break:keep-all; }
+h1 { font-size:21px; margin:0 0 6px; }
+.lede { color:var(--muted); margin:0 0 20px; max-width:84ch; }
+.hint { margin-top:24px; color:var(--muted); font-size:13px; max-width:84ch; }
+.hint strong { color:var(--ink); }
+.controls { display:flex; gap:20px; align-items:center; flex-wrap:wrap;
+            background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+            padding:14px 18px; }
+.controls label { font-size:13px; color:var(--muted); display:flex; align-items:center; gap:8px; }
+.controls b { color:var(--ink); font-variant-numeric:tabular-nums; }
+input[type=range] { width:170px; accent-color:var(--accent); }
+input[type=checkbox] { accent-color:var(--accent); }
+select, button { font:inherit; font-size:14px; border-radius:6px; border:1px solid var(--line);
+                 background:var(--bg); color:var(--ink); padding:7px 14px; cursor:pointer; }
+button.primary { background:var(--accent); border-color:var(--accent); color:#fff; font-weight:600; }
+button:disabled, select:disabled { opacity:.45; cursor:default; }
+button:focus-visible, select:focus-visible, input:focus-visible {
+  outline:2px solid var(--accent); outline-offset:2px; }
+.stage { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(340px,100%),1fr)); gap:20px;
+         margin-top:22px; }
+.col { min-width:0; }
+.col > h2 { font-size:15px; margin:0 0 2px; }
+.col > .sub { font-size:13px; color:var(--muted); margin:0 0 10px; min-height:2.8em; }
+.screen { border:1px solid var(--line); border-radius:var(--radius); overflow:hidden;
+          background:var(--bg); height:320px; display:flex; flex-direction:column; font-size:13px; }
+.screen-head { padding:6px 10px; border-bottom:1px solid var(--line);
+               color:var(--muted); font-size:12px; min-height:28px; }
+.screen-body { flex:1; padding:6px; overflow:auto; }
+.screen-foot { border-top:1px solid var(--line); padding:5px 10px;
+               color:var(--muted); font-size:12px; min-height:28px; }
+.note { color:var(--muted); font-size:12px; padding:4px 6px; }
+.row { display:flex; align-items:center; gap:6px; padding:6px 8px; border-radius:4px;
+       background:var(--row); margin-bottom:4px; }
+.row .grow { flex:1; min-width:0; }
+.skel { height:16px; margin:7px 6px; border-radius:4px; background:var(--skel);
+        animation:breathe 1.6s ease-in-out infinite; }
+.skel.narrow { width:70%; } .skel.narrower { width:55%; }
+.placeholder { display:inline-block; height:11px; border-radius:3px; background:var(--skel);
+               vertical-align:-1px; animation:breathe 1.6s ease-in-out infinite; }
+@keyframes breathe { 0%,100% { opacity:.55 } 50% { opacity:1 } }
+@media (prefers-reduced-motion: reduce) {
+  .skel, .placeholder { animation:none; }
+  .track i { transition:none; }
+}
+.empty { height:100%; display:grid; place-items:center; text-align:center;
+         color:var(--muted); font-size:12px; padding:16px; }
+.meter { margin-top:10px; font-size:13px; display:flex; gap:18px; flex-wrap:wrap; min-height:1.9em; }
+.meter b { font-size:18px; font-variant-numeric:tabular-nums; }
+.meter .slow { color:var(--warm); } .meter .fast { color:var(--ok); }
+.track { margin-top:8px; height:6px; border-radius:3px; background:var(--skel); overflow:hidden; }
+.track i { display:block; height:100%; width:0; background:var(--accent); transition:width .12s linear; }
+.log { margin-top:10px; height:120px; overflow:auto; background:var(--panel);
+       border:1px solid var(--line); border-radius:6px; padding:8px 10px; font-size:12px;
+       font-family:Consolas,"D2Coding",monospace; white-space:pre-wrap; }
+.log div { color:var(--muted); }
+.log .hit { color:var(--ok); }
+.log .bad { color:var(--warm); }
+@media print { body { max-width:none; } .controls { display:none; } .log, .screen { height:auto; } }
+
+/* ── 이 데모 전용 ─────────────────────────────────────────────────── */
+/* [고칠 자리] 흉내 낼 제품 화면의 생김새에 맞춰 여기에만 덧붙입니다. */
+.tag { font-size:11px; color:var(--muted); border:1px solid var(--line); border-radius:4px;
+       padding:1px 6px; white-space:nowrap; }
+</style>
+</head>
+<body>
+
+<!-- [고칠 자리] 제목과 도입부. 도입부는 「무엇이 문제였고, 무엇을 눌러 보면 되는지」까지 적습니다. -->
+<h1>비교형 데모 템플릿</h1>
+<p class="lede">
+목록을 그리려면 항목을 하나씩 읽어야 합니다. 바뀌기 전에는 <strong>전부 다 읽은 뒤에야</strong> 한 번에
+그렸고, 바뀐 뒤에는 <strong>읽은 것부터 차례로</strong> 그립니다. 두 쪽이 끝나는 시각은 같습니다.
+아래에서 항목 수와 한 건을 읽는 비용을 정하고 <strong>실행</strong> 을 눌러 두 쪽을 비교해 보십시오.
+</p>
+
+<!-- [고칠 자리] 조작 항목. 조작은 「결과가 눈에 띄게 달라지는 것」만 남기고 넷을 넘기지 않습니다. -->
+<div class="controls">
+  <label>항목 수
+    <input id="count" type="range" min="4" max="40" step="2" value="16">
+    <b id="countText">16개</b>
+  </label>
+  <label>한 건을 읽는 비용
+    <input id="cost" type="range" min="10" max="200" step="10" value="60">
+    <b id="costText">60ms</b>
+  </label>
+  <label>시작 상태
+    <select id="mode">
+      <option value="normal">보통</option>
+      <option value="empty">항목이 하나도 없음</option>
+      <option value="error">중간에 읽기 실패</option>
+    </select>
+  </label>
+  <button id="run" class="primary" type="button">실행</button>
+  <button id="reset" type="button">초기화</button>
+</div>
+
+<div class="stage">
+  <section class="col">
+    <!-- [고칠 자리] 왼쪽 = 바뀌기 전. 제목 한 줄, 설명 한 줄. -->
+    <h2>바뀌기 전 — 전부 읽고 한 번에 그린다</h2>
+    <p class="sub">마지막 한 건이 도착할 때까지 화면에는 아무 내용도 나타나지 않습니다.</p>
+    <div class="screen" id="screen-before"></div>
+    <div class="meter">첫 내용까지 <b id="first-before">—</b><span>전부까지 <b id="all-before">—</b></span></div>
+    <div class="track"><i id="bar-before"></i></div>
+    <div class="log" id="log-before"></div>
+  </section>
+
+  <section class="col">
+    <!-- [고칠 자리] 오른쪽 = 바뀐 뒤. -->
+    <h2>바뀐 뒤 — 읽은 것부터 차례로 그린다</h2>
+    <p class="sub">첫 한 건이 도착하는 순간 화면이 내용을 말하기 시작하고, 나머지는 뒤따릅니다.</p>
+    <div class="screen" id="screen-after"></div>
+    <div class="meter">첫 내용까지 <b id="first-after">—</b><span>전부까지 <b id="all-after">—</b></span></div>
+    <div class="track"><i id="bar-after"></i></div>
+    <div class="log" id="log-after"></div>
+  </section>
+</div>
+
+<!-- [고칠 자리] 마무리 설명. 「왜 이렇게 했는가」와 「이 화면의 한계」를 함께 적습니다. -->
+<p class="hint">
+<strong>총 시간은 두 쪽이 같습니다.</strong> 바뀐 것은 그 시간 동안 화면이 무엇을 말해 주는가입니다.
+항목 수를 늘리고 읽는 비용을 올릴수록 두 쪽의 첫 내용 시각이 벌어집니다.<br>
+<strong>시작 상태를 바꿔 보십시오.</strong> 항목이 하나도 없을 때와 중간에 읽기가 실패할 때에도 두 쪽이
+빈 화면으로 남지 않고 각각 그 사정을 문장으로 말해 줍니다.<br>
+이 화면은 지연을 흉내 낸 <strong>연출</strong>이고 규칙만 제품과 같습니다. 회귀는 단위 테스트가 잡습니다.
+</p>
+
+<script>
+(function () {
+    'use strict';
+
+    /* ── [고칠 자리] 시나리오 정의 ──────────────────────────────────
+       이 데모가 흉내 내는 일을 여기 한 곳에 모아 둡니다. 아래 Stage 는 이 정의만 읽으므로,
+       대개는 이 구역과 render 함수만 고쳐도 새 데모가 됩니다. */
+    var SCENARIO = {
+        /** 항목 하나가 도착했을 때 화면에 그릴 내용을 만듭니다. */
+        itemLabel: function itemLabel(index) { return '항목 ' + (index + 1); },
+        itemTag: function itemTag(index) { return index % 3 === 0 ? '수행 중' : '대기'; },
+        /** 읽기 실패를 흉내 낼 지점입니다. 실패가 없는 데모라면 항상 -1 을 돌려주면 됩니다. */
+        failAt: function failAt(total, mode) { return mode === 'error' ? Math.ceil(total / 2) : -1; }
+    };
+
+    var countInput = document.getElementById('count');
+    var costInput = document.getElementById('cost');
+    var modeSelect = document.getElementById('mode');
+    var countText = document.getElementById('countText');
+    var costText = document.getElementById('costText');
+    var runButton = document.getElementById('run');
+    var resetButton = document.getElementById('reset');
+
+    function readCount() { return modeSelect.value === 'empty' ? 0 : Number(countInput.value); }
+    function readCost() { return Number(costInput.value); }
+    function readMode() { return modeSelect.value; }
+
+    /**
+     * 한 칸(= 화면 하나)을 맡습니다.
+     * `incremental` 이 참이면 도착한 것부터 그리고, 거짓이면 전부 모인 뒤에 한 번에 그립니다.
+     */
+    function Stage(ids, incremental) {
+        this.screen = document.getElementById(ids.screen);
+        this.log = document.getElementById(ids.log);
+        this.first = document.getElementById(ids.first);
+        this.all = document.getElementById(ids.all);
+        this.bar = document.getElementById(ids.bar);
+        this.incremental = incremental;
+        this.timers = [];
+        this.reset();
+    }
+
+    Stage.prototype.reset = function reset() {
+        this.timers.forEach(function each(id) { clearTimeout(id); });
+        this.timers = [];
+        this.startedAt = 0;
+        this.total = 0;
+        this.arrived = 0;
+        this.failed = false;
+        this.done = false;
+        this.log.innerHTML = '';
+        this.first.textContent = '—';
+        this.first.className = '';
+        this.all.textContent = '—';
+        this.bar.style.width = '0';
+        this.screen.innerHTML = '<div class="empty">아직 실행하지 않았습니다.<br>위에서 「실행」 을 눌러 주십시오.</div>';
+    };
+
+    Stage.prototype.note = function note(text, tone) {
+        var line = document.createElement('div');
+        if (tone) { line.className = tone; }
+        var elapsed = this.startedAt ? Math.round(performance.now() - this.startedAt) : 0;
+        line.textContent = String(elapsed).padStart(5, ' ') + 'ms  ' + text;
+        this.log.appendChild(line);
+        this.log.scrollTop = this.log.scrollHeight;
+    };
+
+    Stage.prototype.wait = function wait(ms, run) { this.timers.push(setTimeout(run, ms)); };
+
+    Stage.prototype.run = function run() {
+        this.reset();
+        this.startedAt = performance.now();
+        this.total = readCount();
+        var cost = readCost();
+        var failAt = SCENARIO.failAt(this.total, readMode());
+        var self = this;
+
+        this.render();
+        this.note('시작 — 읽을 항목 ' + this.total + '개');
+
+        if (this.total === 0) {
+            // 읽을 것이 없는 경우에도 화면은 이유를 말해야 합니다.
+            this.done = true;
+            this.note('읽을 항목이 없습니다 — 그 사정을 문구로 알립니다', 'hit');
+            this.all.textContent = '0ms';
+            this.bar.style.width = '100%';
+            this.render();
+            return;
+        }
+
+        function stepOnce(index) {
+            self.wait(cost, function arrived() {
+                if (index === failAt) {
+                    self.failed = true;
+                    self.done = true;
+                    self.note((index + 1) + '번째에서 읽기 실패 — 여기서 멈춥니다', 'bad');
+                    self.finish();
+                    return;
+                }
+                self.arrived = index + 1;
+                if (self.incremental && self.arrived === 1) { self.mark(self.first, 'fast'); }
+                if (self.incremental) { self.render(); }
+                self.bar.style.width = Math.round(self.arrived / self.total * 100) + '%';
+                if (self.arrived < self.total) {
+                    stepOnce(index + 1);
+                    return;
+                }
+                self.done = true;
+                if (!self.incremental) { self.mark(self.first, 'slow'); }
+                self.note('전부 도착 — 화면이 완성되었습니다', 'hit');
+                self.finish();
+            });
+        }
+
+        stepOnce(0);
+    };
+
+    Stage.prototype.mark = function mark(node, tone) {
+        node.textContent = Math.round(performance.now() - this.startedAt) + 'ms';
+        node.className = tone;
+    };
+
+    Stage.prototype.finish = function finish() {
+        this.all.textContent = Math.round(performance.now() - this.startedAt) + 'ms';
+        this.render();
+    };
+
+    /** [고칠 자리] 제품 화면을 그리는 자리입니다. 상태 네 가지를 모두 다뤄야 합니다. */
+    Stage.prototype.render = function render() {
+        var parts = [];
+        var visible = this.incremental ? this.arrived : (this.done ? this.arrived : 0);
+
+        parts.push('<div class="screen-head">'
+            + (this.done ? '항목 ' + this.arrived + '개' : '<span class="placeholder" style="width:90px"></span>')
+            + '</div>');
+
+        if (this.failed) {
+            // ① 실패: 지금까지 받은 것은 남겨 두고, 멈춘 이유를 덧붙입니다.
+            parts.push('<div class="screen-body">' + this.rows(visible)
+                + '<div class="note">읽기가 실패해 여기서 멈췄습니다. 이미 받은 '
+                + visible + '개는 그대로 둡니다.</div></div>');
+        } else if (this.done && this.total === 0) {
+            // ② 빈 목록: 빈 화면 대신 문장을 둡니다.
+            parts.push('<div class="screen-body"><div class="empty">보여 줄 항목이 없습니다.</div></div>');
+        } else if (visible === 0) {
+            // ③ 대기: 곧 채워질 자리를 미리 잡아 둡니다.
+            parts.push('<div class="screen-body"><div class="note">읽고 있습니다…</div>'
+                + '<div class="skel"></div><div class="skel narrow"></div>'
+                + '<div class="skel narrower"></div></div>');
+        } else {
+            // ④ 보통: 도착한 만큼 그립니다.
+            parts.push('<div class="screen-body">' + this.rows(visible)
+                + (this.done ? '' : '<div class="skel narrow"></div>') + '</div>');
+        }
+
+        parts.push('<div class="screen-foot">'
+            + (this.done
+                ? (this.failed ? '일부만 표시하고 있습니다'
+                    : (this.total === 0 ? '표시할 항목이 없습니다' : '모두 표시했습니다'))
+                : '<span class="placeholder" style="width:70px"></span>')
+            + '</div>');
+
+        this.screen.innerHTML = parts.join('');
+    };
+
+    Stage.prototype.rows = function rows(count) {
+        var out = [];
+        for (var i = 0; i < count; i += 1) {
+            out.push('<div class="row"><span class="grow">' + SCENARIO.itemLabel(i) + '</span>'
+                + '<span class="tag">' + SCENARIO.itemTag(i) + '</span></div>');
+        }
+        return out.join('');
+    };
+
+    var before = new Stage({ screen:'screen-before', log:'log-before', first:'first-before',
+                             all:'all-before', bar:'bar-before' }, false);
+    var after = new Stage({ screen:'screen-after', log:'log-after', first:'first-after',
+                            all:'all-after', bar:'bar-after' }, true);
+
+    function syncLabels() {
+        countText.textContent = readCount() + '개';
+        costText.textContent = readCost() + 'ms';
+        countInput.disabled = modeSelect.value === 'empty';
+    }
+
+    countInput.addEventListener('input', syncLabels);
+    costInput.addEventListener('input', syncLabels);
+    modeSelect.addEventListener('change', syncLabels);
+    runButton.addEventListener('click', function onRun() { before.run(); after.run(); });
+    resetButton.addEventListener('click', function onReset() { before.reset(); after.reset(); });
+
+    syncLabels();
+}());
+</script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+# Codex 전용 메타데이터입니다. Claude Code 쪽에는 이런 파일이 없습니다.
+interface:
+  display_name: "DemoMaker"
+  brand_color: "#2f6feb"
+
+policy:
+  # 데모를 만들어 달라는 요청에서 저절로 불려 나오도록 둡니다.
+  allow_implicit_invocation: true

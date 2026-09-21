@@ -8,6 +8,10 @@
 
 ## 설치
 
+명령을 직접 실행하기가 번거로우면, Claude Code 나 Codex 에게 이 저장소 주소
+(`https://github.com/taku7664/DemoMaker`)를 건네고 **「이 스킬을 설치해 줘」** 라고 말하면 됩니다.
+아래 내용을 읽고 알아서 설치합니다.
+
 ```powershell
 powershell -ExecutionPolicy Bypass -File install\install.ps1
 ```

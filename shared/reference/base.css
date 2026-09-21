@@ -30,10 +30,23 @@ body { margin:0 auto; padding:28px 24px 48px; max-width:1180px;
        font-family:"Malgun Gothic","Segoe UI",system-ui,sans-serif;
        /* 긴 식별자나 경로가 들어와도 가로 스크롤이 생기지 않습니다. */
        overflow-wrap:anywhere; word-break:keep-all; }
-h1 { font-size:21px; margin:0 0 6px; }
-.lede { color:var(--muted); margin:0 0 20px; max-width:84ch; }
-.hint { margin-top:24px; color:var(--muted); font-size:13px; max-width:84ch; }
-.hint strong { color:var(--ink); }
+h1 { font-size:21px; margin:0 0 6px; line-height:1.4; }
+h2 { font-size:16px; margin:28px 0 8px; }
+.lede { color:var(--muted); margin:0; max-width:84ch; }
+
+/* 「■ 왜 필요한가?」 자리입니다. 이 절이 없는 데모는 내보내지 않습니다. */
+.why { max-width:84ch; }
+.why p { margin:0 0 8px; }
+.why strong { color:var(--ink); }
+
+/* 「■ 체크리스트」 자리입니다. 마무리 문단을 대신합니다. */
+.checklist { list-style:none; padding:0; margin:0; max-width:84ch; }
+.checklist li + li { margin-top:14px; }
+.checklist label { display:flex; gap:9px; align-items:flex-start; cursor:pointer; }
+.checklist input { margin:6px 0 0; accent-color:var(--accent); flex:none; }
+.checklist .item { font-weight:600; }
+.checklist input:checked ~ .item { color:var(--muted); font-weight:400; }
+.checklist p { margin:3px 0 0 26px; color:var(--muted); font-size:13px; }
 
 /* ── 조작 막대 ──────────────────────────────────────────────────── */
 .controls { display:flex; gap:20px; align-items:center; flex-wrap:wrap;

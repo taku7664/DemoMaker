@@ -63,7 +63,7 @@ DemoMaker/
 | `shared/templates/demo-cases.html` | 규칙을 경우별로 확인하는 케이스 표형 데모 |
 | `shared/reference/STYLE.md` | 데모 규격과 내보내기 전 점검표 |
 | `shared/reference/base.css` | 공통 스타일 원본 |
-| `sample/노드-그래프-여는-동안.html` | 템플릿으로 만든 데모 보기. 먼저 열어 보면 어디까지 채워야 하는지 알 수 있습니다 |
+| `sample/` | 템플릿으로 만든 데모 보기. 먼저 열어 보면 어디까지 채워야 하는지 알 수 있습니다 |
 
 두 도구는 스킬을 찾는 경로와 참고 자료 폴더의 이름이 서로 다릅니다. Claude Code 는 `reference/` 를,
 Codex 는 `references/` 를 쓰므로 설치 스크립트가 복사할 때 이름을 맞춰 줍니다. 그래서 `shared/` 에는

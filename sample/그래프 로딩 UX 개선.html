@@ -47,13 +47,13 @@ h2 { font-size:18px; font-weight:700; margin:32px 0 12px; }
 hr { border:none; border-top:1px solid var(--line); margin:24px 0; }
 .lede { color:var(--muted); margin:0; max-width:84ch; }
 
-/* 「■ 왜 필요한가?」 자리입니다. 이 절이 없는 데모는 내보내지 않습니다.
+/* 「왜 필요한가?」 자리입니다. 이 절이 없는 데모는 내보내지 않습니다.
    h2 아래 내용은 한 칸 들여써서 어느 절에 딸린 글인지 눈에 보이게 합니다. */
 .why { max-width:84ch; padding-left:20px; }
 .why p { margin:0 0 8px; }
 .why strong { color:var(--ink); }
 
-/* 「■ 체크리스트」 자리입니다. 마무리 문단을 대신합니다. */
+/* 「체크리스트」 자리입니다. 마무리 문단을 대신합니다. */
 .checklist { list-style:none; padding:0 0 0 20px; margin:0; max-width:84ch; }
 .checklist li + li { margin-top:14px; }
 .checklist label { display:flex; gap:9px; align-items:flex-start; cursor:pointer; }
@@ -61,6 +61,17 @@ hr { border:none; border-top:1px solid var(--line); margin:24px 0; }
 .checklist .item { font-weight:600; }
 .checklist input:checked ~ .item { color:var(--muted); font-weight:400; }
 .checklist p { margin:3px 0 0 26px; color:var(--muted); font-size:13px; }
+
+/* 대제목 아래 목차입니다. 파란 밑줄 대신 링크 아이콘을 붙여 누를 수 있는 자리임을 알립니다. */
+.toc { display:flex; flex-wrap:wrap; gap:4px 14px; margin:14px 0 0; padding:0; list-style:none; }
+.toc a { display:inline-flex; align-items:center; gap:6px; color:var(--muted); text-decoration:none;
+         font-size:13px; padding:3px 6px; border-radius:5px; cursor:pointer; }
+.toc a:hover, .toc a:focus-visible { color:var(--accent); background:var(--panel); }
+.toc svg { flex:none; fill:none; stroke:currentColor; stroke-width:1.5; stroke-linecap:round; }
+/* 목차를 눌러 뛰었을 때 절 제목이 화면 맨 위에 붙지 않도록 자리를 남깁니다. */
+html { scroll-behavior:smooth; }
+h2, hr { scroll-margin-top:18px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior:auto; } }
 .controls { display:flex; gap:20px; align-items:center; flex-wrap:wrap;
             background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
             padding:14px 18px; }
@@ -152,7 +163,13 @@ button:focus-visible, select:focus-visible, input:focus-visible {
 직접 바꿀 수 있습니다.
 </p>
 
-<h2>■ 왜 필요한가?</h2>
+<nav class="toc">
+  <a href="#why"><svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><path d="M7 9a3.5 3.5 0 0 0 5 0l2-2a3.5 3.5 0 0 0-5-5l-1 1"/><path d="M9 7a3.5 3.5 0 0 0-5 0l-2 2a3.5 3.5 0 0 0 5 5l1-1"/></svg>왜 필요한가</a>
+  <a href="#demo"><svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><path d="M7 9a3.5 3.5 0 0 0 5 0l2-2a3.5 3.5 0 0 0-5-5l-1 1"/><path d="M9 7a3.5 3.5 0 0 0-5 0l-2 2a3.5 3.5 0 0 0 5 5l1-1"/></svg>데모</a>
+  <a href="#checklist"><svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><path d="M7 9a3.5 3.5 0 0 0 5 0l2-2a3.5 3.5 0 0 0-5-5l-1 1"/><path d="M9 7a3.5 3.5 0 0 0-5 0l-2 2a3.5 3.5 0 0 0 5 5l1-1"/></svg>체크리스트</a>
+</nav>
+
+<h2 id="why">왜 필요한가?</h2>
 <div class="why">
 <p><strong>지금은</strong> 편집기를 열면 서버에 그래프를 묻고, 펼쳐 둔 하위 그래프를 따라가고,
 이름표를 정리하고, 자리를 계산한 뒤에야 그림이 한 번에 나타납니다. 그 전 구간에 화면이 내놓는 것은
@@ -166,7 +183,7 @@ button:focus-visible, select:focus-visible, input:focus-visible {
 편집기에 알림을 몇 줄 더하고 문구를 갈아 끼우는 것이 전부입니다.</p>
 </div>
 
-<hr>
+<hr id="demo">
 
 <div class="controls">
   <label>서버 응답 1회
@@ -214,7 +231,7 @@ button:focus-visible, select:focus-visible, input:focus-visible {
 
 <hr>
 
-<h2>■ 체크리스트</h2>
+<h2 id="checklist">체크리스트</h2>
 <ul class="checklist">
   <li>
     <label><input type="checkbox"><span class="item">두 쪽이 같은 시각에 그림을 얻습니다.</span></label>

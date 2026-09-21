@@ -63,9 +63,10 @@ hr { border:none; border-top:1px solid var(--line); margin:24px 0; }
 .checklist p { margin:3px 0 0 26px; color:var(--muted); font-size:13px; }
 
 /* 대제목 아래 목차입니다. 파란 밑줄 대신 링크 아이콘을 붙여 누를 수 있는 자리임을 알립니다. */
-.toc { display:flex; flex-wrap:wrap; gap:4px 14px; margin:14px 0 0; padding:0; list-style:none; }
-.toc a { display:inline-flex; align-items:center; gap:6px; color:var(--muted); text-decoration:none;
-         font-size:13px; padding:3px 6px; border-radius:5px; cursor:pointer; }
+.toc { list-style:none; margin:0; padding:0 0 0 20px; }
+.toc li + li { margin-top:2px; }
+.toc a { display:inline-flex; align-items:center; gap:7px; color:var(--muted); text-decoration:none;
+         font-size:14px; padding:3px 6px; border-radius:5px; cursor:pointer; }
 .toc a:hover, .toc a:focus-visible { color:var(--accent); background:var(--panel); }
 .toc svg { flex:none; fill:none; stroke:currentColor; stroke-width:1.5; stroke-linecap:round; }
 /* 목차를 눌러 뛰었을 때 절 제목이 화면 맨 위에 붙지 않도록 자리를 남깁니다. */
@@ -163,11 +164,12 @@ button:focus-visible, select:focus-visible, input:focus-visible {
 직접 바꿀 수 있습니다.
 </p>
 
-<nav class="toc">
-  <a href="#why"><svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><path d="M7 9a3.5 3.5 0 0 0 5 0l2-2a3.5 3.5 0 0 0-5-5l-1 1"/><path d="M9 7a3.5 3.5 0 0 0-5 0l-2 2a3.5 3.5 0 0 0 5 5l1-1"/></svg>왜 필요한가</a>
-  <a href="#demo"><svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><path d="M7 9a3.5 3.5 0 0 0 5 0l2-2a3.5 3.5 0 0 0-5-5l-1 1"/><path d="M9 7a3.5 3.5 0 0 0-5 0l-2 2a3.5 3.5 0 0 0 5 5l1-1"/></svg>데모</a>
-  <a href="#checklist"><svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><path d="M7 9a3.5 3.5 0 0 0 5 0l2-2a3.5 3.5 0 0 0-5-5l-1 1"/><path d="M9 7a3.5 3.5 0 0 0-5 0l-2 2a3.5 3.5 0 0 0 5 5l1-1"/></svg>체크리스트</a>
-</nav>
+<h2 id="toc">목차</h2>
+<ul class="toc">
+  <li><a href="#why"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M7 9a3.5 3.5 0 0 0 5 0l2-2a3.5 3.5 0 0 0-5-5l-1 1"/><path d="M9 7a3.5 3.5 0 0 0-5 0l-2 2a3.5 3.5 0 0 0 5 5l1-1"/></svg>왜 필요한가</a></li>
+  <li><a href="#demo"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M7 9a3.5 3.5 0 0 0 5 0l2-2a3.5 3.5 0 0 0-5-5l-1 1"/><path d="M9 7a3.5 3.5 0 0 0-5 0l-2 2a3.5 3.5 0 0 0 5 5l1-1"/></svg>데모</a></li>
+  <li><a href="#checklist"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M7 9a3.5 3.5 0 0 0 5 0l2-2a3.5 3.5 0 0 0-5-5l-1 1"/><path d="M9 7a3.5 3.5 0 0 0-5 0l-2 2a3.5 3.5 0 0 0 5 5l1-1"/></svg>체크리스트</a></li>
+</ul>
 
 <h2 id="why">왜 필요한가?</h2>
 <div class="why">

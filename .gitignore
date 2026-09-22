@@ -1,0 +1,24 @@
+# 편집기와 운영체제가 만드는 파일
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+*.swp
+*~
+
+# 임시 파일과 작업 중 산출물
+*.log
+*.tmp
+*.bak
+tmp/
+temp/
+scratch/
+
+# 자격 증명이 들어가기 쉬운 파일. 실수로라도 올라가지 않게 막아 둡니다.
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+secrets.*
